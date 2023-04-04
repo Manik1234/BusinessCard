@@ -1,30 +1,49 @@
 import React from "react";
 import Card from "../component/Card";
-import { Button, ScrollView, StyleSheet, Text } from "react-native";
+import { Button, PermissionsAndroid, Platform, ScrollView, StyleSheet, Text } from "react-native";
 import { UserDetail } from "./BusinessDetails";
 import { connect } from "react-redux";
+import Contacts from 'react-native-contacts';
 
 interface ISavedDetails {
     userDetails: UserDetail;
-    onDeleteHandler:(index: number) => void
+    onDeleteHandler: (index: number) => void
     index: number;
 }
 
 const SavedDetails: React.FC<ISavedDetails> = (props: ISavedDetails) => {
+    const saveToContactsHandler = () => {
+        var newPerson = {
+            phoneNumbers: [{
+                label: "mobile",
+                number: props.userDetails.phone,
+            }],
+            emailAddresses: [{
+                label: "work",
+                email: props.userDetails.email,
+            }],
+            displayName: props.userDetails.name
+        }
+        Contacts.openContactForm(newPerson).then(contact => {
+            alert('contact has been saved')
+        })
+
+    }
     return (
         <Card key={Math.random()} cardStyle={styles.card}>
             <ScrollView>
                 {
-                    props.userDetails && 
-                        <>
-                            <Text style={styles.sectionTitle}>{props.userDetails.name}</Text>
-                            <Text style={styles.sectionTitle}>{props.userDetails.occupation}</Text>
-                            <Text style={styles.sectionTitle}>{props.userDetails.company}</Text>
-                            <Text style={styles.sectionTitle}>{props.userDetails.email}</Text>
-                            <Text style={styles.sectionTitle}>{props.userDetails.phone}</Text>
-                            <Text style={styles.sectionTitle}>{props.userDetails.linkedin ?? ''}</Text>
-                            <Button title="Delete" onPress={() => props.onDeleteHandler(props.index)} />
-                        </>
+                    props.userDetails &&
+                    <>
+                        <Text style={styles.sectionTitle}>{props.userDetails.name}</Text>
+                        <Text style={styles.sectionTitle}>{props.userDetails.occupation}</Text>
+                        <Text style={styles.sectionTitle}>{props.userDetails.company}</Text>
+                        <Text style={styles.sectionTitle}>{props.userDetails.email}</Text>
+                        <Text style={styles.sectionTitle}>{props.userDetails.phone}</Text>
+                        <Text style={styles.sectionTitle}>{props.userDetails.linkedin ?? ''}</Text>
+                        <Button title="Delete" onPress={() => props.onDeleteHandler(props.index)} />
+                        <Button title="Saved to Contacts" onPress={saveToContactsHandler} />
+                    </>
 
                 }
             </ScrollView>
