@@ -1,11 +1,12 @@
 import React from "react";
 import { Alert, Button, NativeSyntheticEvent, ScrollView, StyleSheet, Text, TextInput, TextInputChangeEventData, View, ViewStyle } from "react-native";
 import Card from "../component/Card";
-import { connect } from 'react-redux';
+import { connect, DispatchProp, useDispatch } from 'react-redux';
 import { bindActionCreators, Dispatch } from "redux";
 import { businessDetail } from "../action/businessDetail";
 
 export interface UserDetail {
+    businessDetail?: any;
     name: string;
     occupation: string;
     company: string;
@@ -15,7 +16,7 @@ export interface UserDetail {
 }
 
 interface Props {
-    businessDetail: (data: any) => void;
+    businessDetail: (data: DispatchProp) => void;
 }
 
 const BusinessDetails = (props: Props) => {
@@ -31,9 +32,9 @@ const BusinessDetails = (props: Props) => {
         return reg.test(email);
     }
 
-    const showAlert = (message: string) => {
+    const showAlert = (title: string, message: string) => {
         Alert.alert(
-            'Error',
+            title,
             message,
             [
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -41,23 +42,17 @@ const BusinessDetails = (props: Props) => {
         );
     }
 
-    const handleClick = async () => {
+    const handleClick = () => {
         if (!user.company || !user.email || !user.name || !user.occupation || !user.phone) {
-            showAlert('Please enter all details')
+            showAlert("Error", 'Please enter all details')
         } else if (user.email && !isEmailValid(user.email)) {
-            showAlert('Invalid Email ID')
+            showAlert("Error", 'Invalid Email ID');
         } else if (user.linkedin && !isLinkedinValid(user.linkedin)) {
-            showAlert('Invalid linkedin profile')
+            showAlert("Error", 'Invalid linkedin profile');
         } else {
-            props.businessDetail(user)
-
-            // const data = await getUser('userData');
-            // if ((data?.length ?? '') > 0) {
-            //     console.log('Values---->', JSON.parse(data ?? ''));
-            // }
-            // await storeUser('userData', JSON.stringify([JSON.parse(data ?? ''), user]));
-            // storeUser('userData', JSON.stringify({...JSON.parse(data ?? ''), user}));
-            // setUserData({ name: '', occupation: '', company: '', email: '', phone: '', linkedin: '' });
+            props?.businessDetail(user as any);
+            showAlert("", 'Information has been saved');
+            setUserData({ name: '', occupation: '', company: '', email: '', phone: '', linkedin: '' });
         }
     }
     return (
@@ -81,11 +76,10 @@ const BusinessDetails = (props: Props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        margin: 16,
         alignItems: 'center', // Centered horizontally
     },
     card: {
-        marginTop: 70,
+        marginTop: 30,
         height: 200,
         width: '100%',
     },
@@ -99,18 +93,13 @@ const styles = StyleSheet.create({
         paddingTop: 10
     }
 });
-// const mapDispatchToProps = (dispatch: any) => (
-//     bindActionCreators({
-//         BusinessDetail,
-//     }, dispatch)
-// );
 
-const mapDispatchToProps = (dispatch: Dispatch) => {    
+const mapDispatchToProps = (dispatch: Dispatch) => {
     return ({
         businessDetail: (data: any) => dispatch(businessDetail(data))
-    // other callbacks go here...
-})
+        // other callbacks go here...
+    })
 };
 
-export default connect(mapDispatchToProps)(BusinessDetails);
+export default connect(null, mapDispatchToProps)(BusinessDetails);
 

@@ -10,10 +10,9 @@ interface IEmptyDetails {
 
 const EmptyDetails: React.FC<IEmptyDetails> = (props: IEmptyDetails) => {
     return (
-        <View style={props.isListEmpty ? styles.container : styles.containerNoFlex}>
-            {props.userDetails.length === 0 && <Text>{"List is empty"}</Text>}
-            <Button onPress={props.onPresshandler} title="Add Business Card" />
-        </View>
+        <>
+            {props.isListEmpty && <Text>{"List is empty"}</Text>}
+        </>
     );
 }
 

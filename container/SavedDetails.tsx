@@ -1,26 +1,30 @@
 import React from "react";
 import Card from "../component/Card";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { Button, ScrollView, StyleSheet, Text } from "react-native";
 import { UserDetail } from "./BusinessDetails";
+import { connect } from "react-redux";
 
 interface ISavedDetails {
-    userDetails: UserDetail[];
+    userDetails: UserDetail;
+    onDeleteHandler:(index: number) => void
+    index: number;
 }
 
 const SavedDetails: React.FC<ISavedDetails> = (props: ISavedDetails) => {
     return (
-        <Card cardStyle={styles.card}>
+        <Card key={Math.random()} cardStyle={styles.card}>
             <ScrollView>
                 {
-                    props.userDetails.map((userDetail: UserDetail) =>
+                    props.userDetails && 
                         <>
-                            <Text style={styles.sectionTitle}>{JSON.parse(userDetail).name}</Text>
-                            <Text style={styles.sectionTitle}>{JSON.parse(userDetail).occupation}</Text>
-                            <Text style={styles.sectionTitle}>{JSON.parse(userDetail).company}</Text>
-                            <Text style={styles.sectionTitle}>{JSON.parse(userDetail).email}</Text>
-                            <Text style={styles.sectionTitle}>{JSON.parse(userDetail).phone}</Text>
-                            <Text style={styles.sectionTitle}>{JSON.parse(userDetail).linkedin ?? ''}</Text>
-                        </>)
+                            <Text style={styles.sectionTitle}>{props.userDetails.name}</Text>
+                            <Text style={styles.sectionTitle}>{props.userDetails.occupation}</Text>
+                            <Text style={styles.sectionTitle}>{props.userDetails.company}</Text>
+                            <Text style={styles.sectionTitle}>{props.userDetails.email}</Text>
+                            <Text style={styles.sectionTitle}>{props.userDetails.phone}</Text>
+                            <Text style={styles.sectionTitle}>{props.userDetails.linkedin ?? ''}</Text>
+                            <Button title="Delete" onPress={() => props.onDeleteHandler(props.index)} />
+                        </>
 
                 }
             </ScrollView>
@@ -50,4 +54,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SavedDetails;
+export default connect()(SavedDetails);

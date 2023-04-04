@@ -1,21 +1,42 @@
 
 import { combineReducers } from 'redux';
+import { UserDetail } from '../container/BusinessDetails';
 
-const INITIAL_STATE = { name: '', occupation: '', company: '', email: '', phone: '', linkedin: '' };
+enum BusinessActionType {
+  ADD_DETAIL = 'ADD_DETAIL',
+  DELETE_DETAIL = 'DELETE_DETAIL'
+}
 
-const businessDetailReducer = (state = INITIAL_STATE, action: any) => {
-  console.log('dispatch mahendru--->', action.type, state);
-  
-    switch (action.type) {
-      default:
-        return state
-    }
-  };
+interface BusinessCardAction {
+  type: BusinessActionType;
+  payload: UserDetail;
+}
 
-  const allReducers = combineReducers({
-    businessDetail: businessDetailReducer,
-  });
-  
-  export default allReducers;
-  
-  
+
+const businessDetailReducer = (state = {}, action: BusinessCardAction) => {
+
+  switch (action.type) {
+    case 'ADD_DETAIL':
+      const prevBusinessCard: UserDetail[] = [];
+      prevBusinessCard.push((state as any).businesUsersCard, action.payload);
+      return {
+        ...state, businesUsersCard: prevBusinessCard.flat().filter(elements => {
+          return elements !== null && elements !== undefined ;
+         })
+      }
+    case 'DELETE_DETAIL':
+      state.businesUsersCard.splice((action.payload as number), 1)
+      return {
+        ...state
+      }
+    default:
+      return state
+  }
+};
+
+const allReducers = combineReducers({
+  businessDetail: businessDetailReducer,
+});
+
+export default allReducers;
+
